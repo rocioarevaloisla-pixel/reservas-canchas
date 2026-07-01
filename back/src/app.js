@@ -54,6 +54,11 @@ async function start() {
     await sequelize.sync();
     console.log('Base de datos sincronizada');
 
+    try {
+      await sequelize.query("ALTER TABLE Servicios ADD COLUMN activo TINYINT(1) DEFAULT 1 AFTER precio");
+      console.log('Columna activo agregada a Servicios');
+    } catch (_) { /* ya existe */ }
+
     const [adminUser] = await User.findOrCreate({
       where: { email: 'admin@canchas.cl' },
       defaults: { nombre: 'Administrador', password: await bcrypt.hash('admin123', 10), rol: 'admin' },

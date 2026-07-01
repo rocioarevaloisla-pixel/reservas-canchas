@@ -9,6 +9,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Landing = lazy(() => import('./pages/Landing'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Inicio = lazy(() => import('./pages/Inicio'));
 const Canchas = lazy(() => import('./pages/Canchas'));
 const Horarios = lazy(() => import('./pages/Horarios'));
 const Reservar = lazy(() => import('./pages/Reservar'));
@@ -31,13 +32,20 @@ function ProtectedRoute({ children }) {
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading">Cargando...</div>;
-  return user && user.rol === 'admin' ? children : <Navigate to="/dashboard" />;
+  return user && user.rol === 'admin' ? children : <Navigate to={user ? '/inicio' : '/login'} />;
+}
+
+function HomeRedirect() {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading">Cargando...</div>;
+  if (!user) return <Landing />;
+  return user.rol === 'admin' ? <Navigate to="/dashboard" /> : <Navigate to="/inicio" />;
 }
 
 function ClientRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading">Cargando...</div>;
-  return user && user.rol === 'cliente' ? children : <Navigate to="/dashboard" />;
+  return user && user.rol === 'cliente' ? children : <Navigate to={user ? '/dashboard' : '/login'} />;
 }
 
 export default function App() {
@@ -50,8 +58,9 @@ export default function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/" element={<Landing />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/" element={<HomeRedirect />} />
+              <Route path="/inicio" element={<ClientRoute><Inicio /></ClientRoute>} />
+              <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
               <Route path="/canchas" element={<AdminRoute><Canchas /></AdminRoute>} />
               <Route path="/horarios" element={<AdminRoute><Horarios /></AdminRoute>} />
               <Route path="/reservar" element={<ClientRoute><Reservar /></ClientRoute>} />

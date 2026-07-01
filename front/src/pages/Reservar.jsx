@@ -226,11 +226,6 @@ export default function Reservar() {
         {canchaSel && (
           <div style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>
             {canchaSel.descripcion} — Capacidad: {canchaSel.capacidad} jugadores
-            {profesionalesCancha.length > 0 && (
-              <p style={{ marginTop: '6px' }}>
-                <strong>Profesionales:</strong> {profesionalesCancha.map(p => p.nombre).join(', ')}
-              </p>
-            )}
           </div>
         )}
       </div>
@@ -262,9 +257,6 @@ export default function Reservar() {
                     <p>{canchaSel.descripcion}</p>
                     <p>💰 ${Number(canchaSel.precioPorHora).toLocaleString()} / hr</p>
                     <p>👥 {canchaSel.capacidad} jugadores</p>
-                    {profesionalesCancha.length > 0 && (
-                      <p style={{ fontSize: '0.8rem' }}>👤 {profesionalesCancha.map(p => p.nombre).join(', ')}</p>
-                    )}
                   </div>
                 </div>
               </div>

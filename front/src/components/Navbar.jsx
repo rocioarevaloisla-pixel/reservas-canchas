@@ -41,7 +41,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="container nav-inner">
-        <Link to={user ? '/dashboard' : '/'} className="nav-brand" onClick={closeMenu}>
+        <Link to={user ? (user.rol === 'admin' ? '/dashboard' : '/inicio') : '/'} className="nav-brand" onClick={closeMenu}>
           <span className="nav-icon">⚽</span>
           Reserva<span className="brand-accent">Canchas</span>
         </Link>
@@ -56,7 +56,7 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="nav-links">
-                <Link to="/dashboard" className={isActive('/dashboard')} onClick={closeMenu}>Inicio</Link>
+                <Link to={user.rol === 'admin' ? '/dashboard' : '/inicio'} className={isActive(user.rol === 'admin' ? '/dashboard' : '/inicio')} onClick={closeMenu}>Inicio</Link>
                 {user.rol === 'cliente' && (
                   <>
                     <Link to="/reservar" className={isActive('/reservar')} onClick={closeMenu}>Reservar</Link>

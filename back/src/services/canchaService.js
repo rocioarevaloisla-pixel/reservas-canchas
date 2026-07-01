@@ -2,16 +2,16 @@ const { Cancha, Profesional, Servicio } = require('../models');
 
 async function listar(mostrarTodas = false) {
   const where = mostrarTodas ? {} : { activo: true };
-  return Cancha.findAll({
+    return Cancha.findAll({
     where,
-    include: [{ model: Profesional, as: 'Profesionales', attributes: ['id', 'nombre', 'especialidad', 'telefono', 'emailContacto'], through: { attributes: [] }, include: [{ model: Servicio, where: { activo: true }, required: false, attributes: ['id', 'nombre', 'descripcion', 'precio'] }] }],
+    include: [{ model: Profesional, as: 'Profesionales', attributes: ['id', 'nombre', 'especialidad', 'telefono', 'emailContacto'], through: { attributes: [] }, include: [{ model: Servicio, required: false, attributes: ['id', 'nombre', 'descripcion', 'precio'] }] }],
     order: [['nombre', 'ASC']],
   });
 }
 
 async function obtener(id) {
   const cancha = await Cancha.findByPk(id, {
-    include: [{ model: Profesional, as: 'Profesionales', attributes: ['id', 'nombre', 'especialidad', 'telefono', 'emailContacto'], through: { attributes: [] }, include: [{ model: Servicio, where: { activo: true }, required: false, attributes: ['id', 'nombre', 'descripcion', 'precio'] }] }],
+    include: [{ model: Profesional, as: 'Profesionales', attributes: ['id', 'nombre', 'especialidad', 'telefono', 'emailContacto'], through: { attributes: [] }, include: [{ model: Servicio, required: false, attributes: ['id', 'nombre', 'descripcion', 'precio'] }] }],
   });
   if (!cancha) throw { status: 404, message: 'Cancha no encontrada' };
   return cancha;

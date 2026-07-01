@@ -31,14 +31,8 @@ async function reservar({ usuarioId, canchaId, fecha, horaInicio, horaFin, servi
     throw { status: 400, message: 'No puedes reservar en una fecha pasada' };
   }
 
-  if (fecha === hoy) {
-    const [hHora, hMin] = horaInicio.split(':').map(Number);
-    const minInicio = hHora * 60 + hMin;
-    const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes();
-    if (minInicio - ahoraMin < 60) {
-      throw { status: 400, message: 'Debes reservar con al menos 1 hora de anticipación' };
-    }
-  }
+  // La validación de 1 hora de anticipación se hace en el frontend
+  // (el servidor usa UTC, el cliente usa su zona horaria local)
 
   const activas = await Reserva.count({
     where: {
