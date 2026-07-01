@@ -16,8 +16,8 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        nombre: 'Juan Pérez',
-        email: 'juan@correo.cl',
+        nombre: 'Pepe',
+        email: 'pepe@gmail.com',
         password: hashCliente,
         rol: 'cliente',
         createdAt: new Date(),
