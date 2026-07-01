@@ -54,15 +54,24 @@ async function start() {
     await sequelize.sync();
     console.log('Base de datos sincronizada');
 
-    const userCount = await User.count();
-    if (userCount === 0) {
-      console.log('Sembrando datos iniciales...');
-      const hash = await bcrypt.hash('admin123', 10);
-      const hashCliente = await bcrypt.hash('123456', 10);
-      await User.bulkCreate([
-        { nombre: 'Administrador', email: 'admin@canchas.cl', password: hash, rol: 'admin' },
-        { nombre: 'Pepe', email: 'pepe@gmail.com', password: hashCliente, rol: 'cliente' },
-      ]);
+    const [adminUser] = await User.findOrCreate({
+      where: { email: 'admin@canchas.cl' },
+      defaults: { nombre: 'Administrador', password: await bcrypt.hash('admin123', 10), rol: 'admin' },
+    });
+    if (adminUser.nombre !== 'Administrador') {
+      await adminUser.update({ nombre: 'Administrador', password: await bcrypt.hash('admin123', 10) });
+    }
+
+    const [clienteUser] = await User.findOrCreate({
+      where: { email: 'pepe@gmail.com' },
+      defaults: { nombre: 'Pepe', password: await bcrypt.hash('123456', 10), rol: 'cliente' },
+    });
+    if (clienteUser.nombre !== 'Pepe') {
+      await clienteUser.update({ nombre: 'Pepe', password: await bcrypt.hash('123456', 10) });
+    }
+
+    const canchaCount = await Cancha.count();
+    if (canchaCount === 0) {
       const canchas = await Cancha.bulkCreate([
         { nombre: 'Cancha 1 - Fútbol 5', descripcion: 'Cancha de pasto sintético para fútbol 5', precioPorHora: 25000, capacidad: 5 },
         { nombre: 'Cancha 2 - Fútbol 7', descripcion: 'Cancha de pasto sintético para fútbol 7', precioPorHora: 35000, capacidad: 7 },
@@ -75,8 +84,9 @@ async function start() {
         }
       }
       await Disponibilidad.bulkCreate(horarios);
-      console.log('Datos iniciales sembrados');
+      console.log('Canchas y horarios creados');
     }
+    console.log('Usuarios verificados');
 
     app.listen(port, () => {
       console.log(`API corriendo en http://localhost:${port}`);
