@@ -1,0 +1,11 @@
+{
+  "name": "reservas-canchas",
+  "version": "1.0.0",
+  "description": "Sistema de reservas de canchas de fútbol",
+  "scripts": {
+    "build": "cd front && npm install && npm run build && cd ../back && npm install",
+    "start": "cd back && node src/app.js",
+    "dev:server": "cd back && npm run dev",
+    "dev:client": "cd front && npm run dev"
+  }
+}
