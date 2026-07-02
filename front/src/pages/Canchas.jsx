@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { canchas as canchasApi } from '../api/client';
 import { useToast } from '../components/Toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Canchas() {
   const [list, setList] = useState([]);
@@ -8,6 +9,7 @@ export default function Canchas() {
   const [editId, setEditId] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const toast = useToast();
 
   const load = () => canchasApi.listar('todas=true').then(setList).finally(() => setLoading(false));
@@ -77,18 +79,23 @@ export default function Canchas() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Desactivar esta cancha? Las reservas activas no se verán afectadas.')) return;
+  const handleConfirmDelete = async () => {
     setError('');
     try {
-      await canchasApi.eliminar(id);
+      await canchasApi.eliminar(confirmDeleteId);
       toast.success('Cancha desactivada correctamente');
       load();
     } catch (err) {
       const msg = err.data?.message || err.message || 'Error al eliminar';
       setError(msg);
       toast.error(msg);
+    } finally {
+      setConfirmDeleteId(null);
     }
+  };
+
+  const handleDelete = (id) => {
+    setConfirmDeleteId(id);
   };
 
   return (
@@ -219,6 +226,17 @@ export default function Canchas() {
           </table>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmDeleteId}
+        title="Desactivar Cancha"
+        message="¿Desactivar esta cancha? Las reservas activas no se verán afectadas."
+        confirmText="Sí, desactivar"
+        cancelText="Volver"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }

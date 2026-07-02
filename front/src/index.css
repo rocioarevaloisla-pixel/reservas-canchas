@@ -1399,3 +1399,43 @@ input:focus, select:focus { border-color: var(--green); background: white; box-s
   .cal-sidebar { width: 100%; }
   .slots-timeline { grid-template-columns: 1fr 1fr; }
 }
+
+.confirm-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-confirm {
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.btn-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-confirm-danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn-confirm-danger:hover:not(:disabled) {
+  background: #b02a37;
+}
+
+.btn-confirm-cancel {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.btn-confirm-cancel:hover:not(:disabled) {
+  background: var(--border);
+}

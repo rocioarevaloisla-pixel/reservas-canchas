@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 import Calendar from '../components/Calendar';
+import ConfirmModal from '../components/ConfirmModal';
 
 function estadoReserva(r) {
   if (r.estado === 'cancelada') return { label: 'Cancelada', cls: 'cancelada' };
@@ -19,6 +20,7 @@ export default function MisReservas() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [misMarcas, setMisMarcas] = useState({});
+  const [confirmCancelId, setConfirmCancelId] = useState(null);
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -56,19 +58,24 @@ export default function MisReservas() {
     reservasApi.resumenMesUsuario(y, m).then(setMisMarcas).catch(() => {});
   };
 
-  const handleCancel = async (id) => {
-    if (!confirm('¿Cancelar esta reserva? El horario quedará disponible para otros usuarios.')) return;
+  const handleConfirmCancel = async () => {
     setError('');
     try {
-      await reservasApi.cancelar(id);
+      await reservasApi.cancelar(confirmCancelId);
       toast.success('Reserva cancelada correctamente');
-      setReservasList((prev) => prev.map(r => r.id === id ? { ...r, estado: 'cancelada', vencida: false } : r));
+      setReservasList((prev) => prev.map(r => r.id === confirmCancelId ? { ...r, estado: 'cancelada', vencida: false } : r));
       setShowInvoice(null);
     } catch (err) {
       const msg = err.data?.message || err.message || 'Error al cancelar';
       setError(msg);
       toast.error(msg);
+    } finally {
+      setConfirmCancelId(null);
     }
+  };
+
+  const handleCancel = (id) => {
+    setConfirmCancelId(id);
   };
 
   const maxDate = (() => {
@@ -281,6 +288,17 @@ export default function MisReservas() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmCancelId}
+        title="Cancelar Reserva"
+        message="¿Cancelar esta reserva? El horario quedará disponible para otros usuarios."
+        confirmText="Sí, cancelar"
+        cancelText="Volver"
+        variant="danger"
+        onConfirm={handleConfirmCancel}
+        onCancel={() => setConfirmCancelId(null)}
+      />
     </div>
   );
 }

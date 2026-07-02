@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { profesionales as profesionalesApi, canchas as canchasApi, servicios as serviciosApi } from '../api/client';
 import { useToast } from '../components/Toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Profesionales() {
   const [list, setList] = useState([]);
@@ -61,18 +62,35 @@ export default function Profesionales() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Desactivar este profesional?')) return;
+  const handleConfirmAction = async () => {
+    if (!confirmModal) return;
+    const { type, id } = confirmModal;
     setError('');
     try {
-      await profesionalesApi.eliminar(id);
-      toast.success('Profesional desactivado');
-      load();
+      if (type === 'desactivar-profesional') {
+        await profesionalesApi.eliminar(id);
+        toast.success('Profesional desactivado');
+        load();
+      } else if (type === 'eliminar-profesional') {
+        await profesionalesApi.eliminarPermanente(id);
+        toast.success('Profesional eliminado permanentemente');
+        load();
+      } else if (type === 'desactivar-servicio') {
+        await serviciosApi.eliminar(id);
+        toast.success('Servicio desactivado');
+        loadServicios(serviciosModal?.id);
+      }
     } catch (err) {
-      const msg = err.data?.message || err.message || 'Error al desactivar';
+      const msg = err.data?.message || err.message || 'Error';
       setError(msg);
       toast.error(msg);
+    } finally {
+      setConfirmModal(null);
     }
+  };
+
+  const handleDelete = (id) => {
+    setConfirmModal({ type: 'desactivar-profesional', id });
   };
 
   const handleReactivar = async (id) => {
@@ -85,15 +103,8 @@ export default function Profesionales() {
     }
   };
 
-  const handleEliminarPermanente = async (id) => {
-    if (!confirm('¿Eliminar permanentemente este profesional? Esta acción no se puede deshacer.')) return;
-    try {
-      await profesionalesApi.eliminarPermanente(id);
-      toast.success('Profesional eliminado permanentemente');
-      load();
-    } catch (err) {
-      toast.error(err.data?.message || 'Error al eliminar');
-    }
+  const handleEliminarPermanente = (id) => {
+    setConfirmModal({ type: 'eliminar-profesional', id });
   };
 
   const openAsignar = (p) => {
@@ -119,6 +130,7 @@ export default function Profesionales() {
     );
   };
 
+  const [confirmModal, setConfirmModal] = useState(null);
   const [serviciosModal, setServiciosModal] = useState(null);
   const [serviciosList, setServiciosList] = useState([]);
   const [servForm, setServForm] = useState({ nombre: '', descripcion: '', precio: '' });
@@ -172,15 +184,8 @@ export default function Profesionales() {
     setServEditId(s.id);
   };
 
-  const handleServDelete = async (id) => {
-    if (!confirm('¿Desactivar este servicio?')) return;
-    try {
-      await serviciosApi.eliminar(id);
-      toast.success('Servicio desactivado');
-      loadServicios(serviciosModal.id);
-    } catch (err) {
-      toast.error(err.data?.message || 'Error al eliminar');
-    }
+  const handleServDelete = (id) => {
+    setConfirmModal({ type: 'desactivar-servicio', id });
   };
 
   return (
@@ -417,6 +422,23 @@ export default function Profesionales() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmModal}
+        title={confirmModal?.type === 'eliminar-profesional' ? 'Eliminar Profesional' : confirmModal?.type === 'desactivar-servicio' ? 'Desactivar Servicio' : 'Desactivar Profesional'}
+        message={
+          confirmModal?.type === 'desactivar-profesional' ? '¿Desactivar este profesional?' :
+          confirmModal?.type === 'eliminar-profesional' ? '¿Eliminar permanentemente este profesional? Esta acción no se puede deshacer.' :
+          '¿Desactivar este servicio?'
+        }
+        confirmText={
+          confirmModal?.type === 'eliminar-profesional' ? 'Sí, eliminar' : 'Sí, desactivar'
+        }
+        cancelText="Volver"
+        variant="danger"
+        onConfirm={handleConfirmAction}
+        onCancel={() => setConfirmModal(null)}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { canchas as canchasApi, disponibilidad as dispApi } from '../api/client';
 import { useToast } from '../components/Toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -13,6 +14,7 @@ export default function Horarios() {
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [btnExito, setBtnExito] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -63,18 +65,23 @@ export default function Horarios() {
     }
   };
 
-  const removeHorario = async (id) => {
-    if (!confirm('¿Eliminar este horario?')) return;
+  const handleConfirmDelete = async () => {
     setError('');
     try {
-      await dispApi.eliminar(id);
+      await dispApi.eliminar(confirmDeleteId);
       toast.success('Horario eliminado');
       loadHorarios(canchaId);
     } catch (err) {
       const msg = err.data?.message || err.message || 'Error al eliminar';
       setError(msg);
       toast.error(msg);
+    } finally {
+      setConfirmDeleteId(null);
     }
+  };
+
+  const removeHorario = (id) => {
+    setConfirmDeleteId(id);
   };
 
   const canchaSel = canchasList.find(c => c.id === parseInt(canchaId));
@@ -173,6 +180,17 @@ export default function Horarios() {
           <p>Selecciona una cancha para configurar sus horarios</p>
         </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmDeleteId}
+        title="Eliminar Horario"
+        message="¿Eliminar este horario?"
+        confirmText="Sí, eliminar"
+        cancelText="Volver"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }
