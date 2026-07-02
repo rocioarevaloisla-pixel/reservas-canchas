@@ -369,7 +369,7 @@ export default function Profesionales() {
                       <strong style={{ fontSize: '0.9rem' }}>{s.nombre}</strong>
                       {s.descripcion && <p style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{s.descripcion}</p>}
                     </div>
-                    <span style={{ fontWeight: 700, color: 'var(--green)', fontSize: '0.9rem' }}>${Number(s.precio).toLocaleString()}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--grass)', fontSize: '0.9rem' }}>${Number(s.precio).toLocaleString()}</span>
                     <button onClick={() => handleServEdit(s)} className="btn-sm">Editar</button>
                     {s.activo && <button onClick={() => handleServDelete(s.id)} className="btn-sm btn-danger">Desactivar</button>}
                   </div>

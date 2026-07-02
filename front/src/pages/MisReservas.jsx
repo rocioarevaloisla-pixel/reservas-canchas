@@ -251,7 +251,7 @@ export default function MisReservas() {
                 {showInvoice.Servicio && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <span style={{ color: 'var(--text-light)' }}>Servicio: {showInvoice.Servicio.nombre}</span>
-                    <span style={{ color: 'var(--green)' }}>+${Number(showInvoice.Servicio.precio).toLocaleString()}</span>
+                    <span style={{ color: 'var(--grass)' }}>+${Number(showInvoice.Servicio.precio).toLocaleString()}</span>
                   </div>
                 )}
                 {showInvoice.Servicio?.Profesional && (

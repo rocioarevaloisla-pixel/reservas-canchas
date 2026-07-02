@@ -350,7 +350,7 @@ export default function Reservar() {
                             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>por {prof.nombre}</span>
                           </div>
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                            <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--green)' }}>+${Number(s.precio).toLocaleString()}</span>
+                            <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--grass)' }}>+${Number(s.precio).toLocaleString()}</span>
                           </div>
                         </div>
                       ))
@@ -423,7 +423,7 @@ export default function Reservar() {
                   <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                       <span style={{ color: 'var(--text-light)' }}>Servicio: {selectedService.nombre}</span>
-                      <span style={{ color: 'var(--green)' }}>+${Number(selectedService.precio).toLocaleString()}</span>
+                      <span style={{ color: 'var(--grass)' }}>+${Number(selectedService.precio).toLocaleString()}</span>
                     </div>
                     {(() => {
                       const prof = profesionalesCancha.find(p => p.Servicios?.some(s => s.id === selectedService.id));

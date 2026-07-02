@@ -71,7 +71,7 @@ export default function Agenda() {
           />
           <div style={{ marginTop: '12px', display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-light)' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }} />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--grass)', display: 'inline-block' }} />
               Con reservas
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
